@@ -18,7 +18,7 @@
 
 // This is changed only when the command IDs change,
 // so OpenRGB can detect compatible firmware.
-#define OPENRGB_PROTOCOL_VERSION 0xD
+#define OPENRGB_PROTOCOL_VERSION 0xF
 
 enum openrgb_command_id {
     OPENRGB_GET_PROTOCOL_VERSION = 1,
@@ -46,7 +46,7 @@ void openrgb_get_qmk_version(void);
 void openrgb_get_device_info(void);
 void openrgb_get_mode_info(void);
 void openrgb_get_led_info(uint8_t *data);
-void openrgb_get_enabled_modes(void);
+void openrgb_get_enabled_modes(uint8_t *data);
 
 void openrgb_set_mode(uint8_t *data);
 void openrgb_direct_mode_set_single_led(uint8_t *data);
