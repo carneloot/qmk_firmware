@@ -240,25 +240,16 @@ void openrgb_get_device_info(void) {
     const uint8_t number_of_modes = sizeof openrgb_rgb_matrix_effects_indexes / sizeof openrgb_rgb_matrix_effects_indexes[0];
     raw_hid_buffer[3] = number_of_modes;
 
-#define MASSDROP_VID 0x04D8
-#if VENDOR_ID == MASSDROP_VID
-#    define PRODUCT_STRING PRODUCT
-#    define MANUFACTURER_STRING MANUFACTURER
-#else
-#    define PRODUCT_STRING STR(PRODUCT)
-#    define MANUFACTURER_STRING STR(MANUFACTURER)
-#endif
-
     uint8_t current_byte = 4;
-    for (uint8_t i = 0; (current_byte < ((RAW_EPSIZE - 3) / 2)) && (PRODUCT_STRING[i] != 0); i++) {
-        raw_hid_buffer[current_byte] = PRODUCT_STRING[i];
+    for (uint8_t i = 0; (current_byte < ((RAW_EPSIZE - 3) / 2)) && (PRODUCT[i] != 0); i++) {
+        raw_hid_buffer[current_byte] = PRODUCT[i];
         current_byte++;
     }
     raw_hid_buffer[current_byte] = 0;
     current_byte++;
 
-    for (uint8_t i = 0; (current_byte + 2 < RAW_EPSIZE) && (MANUFACTURER_STRING[i] != 0); i++) {
-        raw_hid_buffer[current_byte] = MANUFACTURER_STRING[i];
+    for (uint8_t i = 0; (current_byte + 2 < RAW_EPSIZE) && (MANUFACTURER[i] != 0); i++) {
+        raw_hid_buffer[current_byte] = MANUFACTURER[i];
         current_byte++;
     }
 }
