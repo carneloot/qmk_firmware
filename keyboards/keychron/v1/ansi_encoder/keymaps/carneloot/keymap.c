@@ -72,7 +72,7 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][2] = {
 #endif // ENCODER_MAP_ENABLE
 
 // Turn on Caps Lock LED
-#if defined(RGB_MATRIX_ENABLE) && defined(CAPS_LOCK_LED_INDEX)
+#if defined(RGB_MATRIX_ENABLE)
 
 #ifdef RGB_MATRIX_MAXIMUM_BRIGHTNESS
     #define CAPS_LOCK_MAX_BRIGHTNESS RGB_MATRIX_MAXIMUM_BRIGHTNESS
@@ -80,10 +80,40 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][2] = {
     #define CAPS_LOCK_MAX_BRIGHTNESS 0xFF
 #endif
 
+uint8_t caps_lock_leds[] = {
+    0,
+    15,
+    30,
+    45,
+    59,
+    72,
+    73,
+    74,
+    76,
+    77,
+    78,
+    70,
+    57,
+    43,
+    28,
+    13,
+    29,
+    44,
+    58,
+    5,
+    6,
+    7,
+    8
+};
+
+size_t caps_lock_leds_size = sizeof caps_lock_leds / sizeof caps_lock_leds[0];
+
 bool rgb_matrix_indicators_user(void) {
     if (host_keyboard_led_state().caps_lock) {
         uint8_t b = CAPS_LOCK_MAX_BRIGHTNESS;
-        rgb_matrix_set_color(CAPS_LOCK_LED_INDEX, b, b, b);  // white, with the adjusted brightness
+        for (int i = 0; i < caps_lock_leds_size; i++) {
+            rgb_matrix_set_color(caps_lock_leds[i], b, b, b);
+        }
     }
     return true;
 }
