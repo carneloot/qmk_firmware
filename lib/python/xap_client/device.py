@@ -10,14 +10,19 @@ from typing import Optional
 from struct import pack, unpack
 from platform import platform
 
-from .types import XAPSecureStatus, XAPFlags, XAPRequest, XAPResponse
+from .types import XAPSecureStatus, XAPFlags, XAPRequest, XAPResponse, XAPBroadcast
 from .routes import XAPRoutes, XAPRouteError
 
 
 def _u32_to_bcd(val: bytes) -> str:  # noqa: N802
     """Create BCD string
     """
-    return f'{val>>24}.{val>>16 & 0xFF}.{val & 0xFFFF}'
+    tmp = "{:08x}".format(val)
+    major = int(tmp[0:2])
+    minor = int(tmp[2:4])
+    patch = int(tmp[4:8])
+
+    return f'{major}.{minor}.{patch}'
 
 
 def _gen_token() -> bytes:
@@ -111,8 +116,8 @@ class XAPDeviceBase:
         while not hasattr(event, '_ret'):
             event.wait(timeout=0.25)
 
-        r = XAPResponse.from_bytes(event._ret)
-        return (r.flags, r.data[:r.length])
+        r = XAPBroadcast.from_bytes(event._ret)
+        return (r.event, r.data[:r.length])
 
 
 class XAPDevice(XAPDeviceBase):

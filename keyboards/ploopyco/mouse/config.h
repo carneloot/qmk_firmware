@@ -18,48 +18,15 @@
 
 #pragma once
 
-
-/* key matrix size */
-#define MATRIX_ROWS 1
-#define MATRIX_COLS 8
-
-/*
- * Keyboard Matrix Assignments
- *
- * Change this to how you wired your keyboard
- * COLS: AVR pins used for columns, left to right
- * ROWS: AVR pins used for rows, top to bottom
- * DIODE_DIRECTION: COL2ROW = COL = Anode (+), ROW = Cathode (-, marked on diode)
- *                  ROW2COL = ROW = Anode (+), COL = Cathode (-, marked on diode)
- *
- */
-#define DIRECT_PINS                        \
-    {                                      \
-        { D4, D2, E6, B6, D7, C6, C7, B7 } \
-    }
-
 // These pins are not broken out, and cannot be used normally.
 // They are set as output and pulled high, by default
 #define UNUSABLE_PINS \
     { B4, D6, F1, F5, F6, F7 }
 
-#define USB_MAX_POWER_CONSUMPTION 100
-
 /* disable action features */
 //#define NO_ACTION_LAYER
 //#define NO_ACTION_TAPPING
 //#define NO_ACTION_ONESHOT
-
-/* Bootmagic Lite key configuration */
-#define BOOTMAGIC_LITE_ROW 0
-#define BOOTMAGIC_LITE_COLUMN 3
-
-#define RGB_DI_PIN B5
-#define RGBLED_NUM 4
-#define RGBLIGHT_LIMIT_VAL 40
-#define RGBLIGHT_EFFECT_BREATHING
-#define RGBLIGHT_EFFECT_RAINBOW_MOOD
-#define RGBLIGHT_EFFECT_RAINBOW_SWIRL
 
 // #define DEBUG_LED_PIN F7
 

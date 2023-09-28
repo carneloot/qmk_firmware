@@ -32,13 +32,14 @@ GENERIC_FEATURES = \
     KEY_OVERRIDE \
     LEADER \
     PROGRAMMABLE_BUTTON \
+    REPEAT_KEY \
     SECURE \
     SPACE_CADET \
     SWAP_HANDS \
     TAP_DANCE \
-    VELOCIKEY \
     WPM \
     DYNAMIC_TAPPING_TERM \
+    TRI_LAYER
 
 define HANDLE_GENERIC_FEATURE
     # $$(info "Processing: $1_ENABLE $2.c")

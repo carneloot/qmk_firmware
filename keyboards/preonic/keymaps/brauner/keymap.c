@@ -56,17 +56,14 @@ enum combos {
     COMBO_LBRC_RBRC, /* [|] */
     COMBO_LCBR_RCBR, /* {|} */
     COMBO_LT_GT,     /* <|> */
-    COMBO_MAX,
 };
-
-uint16_t COMBO_LEN = COMBO_MAX;
 
 const uint16_t PROGMEM combo_lprn_rprn[] = {KC_LPRN, KC_RPRN, COMBO_END};
 const uint16_t PROGMEM combo_lbrc_rbrc[] = {KC_LBRC, KC_RBRC, COMBO_END};
 const uint16_t PROGMEM combo_lcbr_rcbr[] = {KC_LCBR, KC_RCBR, COMBO_END};
 const uint16_t PROGMEM combo_lt_gt[]     = {KC_LT, KC_GT, COMBO_END};
 
-combo_t key_combos[COMBO_MAX] = {
+combo_t key_combos[] = {
     [COMBO_LPRN_RPRN] = COMBO_ACTION(combo_lprn_rprn),
     [COMBO_LBRC_RBRC] = COMBO_ACTION(combo_lbrc_rbrc),
     [COMBO_LCBR_RCBR] = COMBO_ACTION(combo_lcbr_rcbr),
@@ -279,6 +276,18 @@ static inline bool toggle_layer(enum preonic_layers layer, keyrecord_t *record) 
     return false;
 }
 
+bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case MOD_TAP_LSFT_ENT:
+        case MOD_TAP_LSFT_ESC:
+            /* Immediately select the hold action when another key is pressed. */
+            return true;
+        default:
+            /* Do not select the hold action when another key is pressed. */
+            return false;
+    }
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case QWERTY:
@@ -363,44 +372,35 @@ bool dip_switch_update_user(uint8_t index, bool active) {
     return true;
 }
 
-LEADER_EXTERNS();
-
 static inline void register_ctrl_sequence(uint16_t keycode) {
     tap_code16(RCTL(keycode));
 }
 
-static inline void leader_bindings(void) {
-    LEADER_DICTIONARY() {
-        leading = false;
-        leader_end();
+void leader_end_user(void) {
+    if (leader_sequence_three_keys(KC_A, KC_C, KC_K)) {
+        SEND_STRING("Acked-by: Christian Brauner <brauner@kernel.org>");
+    }
 
-        SEQ_THREE_KEYS(KC_A, KC_C, KC_K) {
-            SEND_STRING("Acked-by: Christian Brauner <brauner@kernel.org>");
-        }
+    if (leader_sequence_three_keys(KC_R, KC_V, KC_B)) {
+        SEND_STRING("Reviewed-by: Christian Brauner <brauner@kernel.org>");
+    }
 
-        SEQ_THREE_KEYS(KC_R, KC_V, KC_B) {
-            SEND_STRING("Reviewed-by: Christian Brauner <brauner@kernel.org>");
-        }
+    if (leader_sequence_three_keys(KC_S, KC_O, KC_B)) {
+        SEND_STRING("Signed-off-by: Christian Brauner <brauner@kernel.org>");
+    }
 
-        SEQ_THREE_KEYS(KC_S, KC_O, KC_B) {
-            SEND_STRING("Signed-off-by: Christian Brauner <brauner@kernel.org>");
-        }
+    /* Support vim-style copy. */
+    if (leader_sequence_one_key(KC_Y)) {
+        tap_code16(C(S(KC_C)));
+    }
 
-        /* Support vim-style copy. */
-        SEQ_ONE_KEY(KC_Y) {
-            tap_code16(C(S(KC_C)));
-        }
-
-        /* Support vim-style paste. */
-        SEQ_ONE_KEY(KC_P) {
-            tap_code16(C(S(KC_V)));
-        }
+    /* Support vim-style paste. */
+    if (leader_sequence_one_key(KC_P)) {
+        tap_code16(C(S(KC_V)));
     }
 }
 
 void matrix_scan_user(void) {
-    leader_bindings();
-
 #ifdef AUDIO_ENABLE
     if (muse_mode) {
         if (muse_counter == 0) {

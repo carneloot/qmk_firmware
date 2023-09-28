@@ -14,7 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "v3.h"
+#include "quantum.h"
 
 #ifdef RGB_MATRIX_ENABLE
 
@@ -125,16 +125,12 @@ led_config_t g_led_config = { {
 
 #if defined(RGB_MATRIX_ENABLE) && defined(CAPS_LOCK_LED_INDEX)
 
-#ifdef RGB_MATRIX_MAXIMUM_BRIGHTNESS
+#if !defined(CAPS_LOCK_MAX_BRIGHTNESS)
     #define CAPS_LOCK_MAX_BRIGHTNESS RGB_MATRIX_MAXIMUM_BRIGHTNESS
-#else
-    #define CAPS_LOCK_MAX_BRIGHTNESS 0xFF
 #endif
 
-#ifdef RGB_MATRIX_VAL_STEP
+#if !defined(CAPS_LOCK_VAL_STEP)
     #define CAPS_LOCK_VAL_STEP RGB_MATRIX_VAL_STEP
-#else
-    #define CAPS_LOCK_VAL_STEP 8
 #endif
 
 bool rgb_matrix_indicators_kb(void) {

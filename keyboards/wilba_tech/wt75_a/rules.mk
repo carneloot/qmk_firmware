@@ -1,9 +1,3 @@
-# MCU name
-MCU = atmega32u4
-
-# Bootloader selection
-BOOTLOADER = atmel-dfu
-
 # Build Options
 #   change yes to no to disable
 #
@@ -17,7 +11,7 @@ BACKLIGHT_ENABLE = no       # Enable keyboard backlight functionality
 AUDIO_ENABLE = no           # Audio output
 
 # project specific files
-SRC =	drivers/led/issi/is31fl3736.c \
+SRC =	drivers/led/issi/is31fl3736-simple.c \
 		i2c_master.c \
 		quantum/color.c \
 		keyboards/wilba_tech/wt_mono_backlight.c \
