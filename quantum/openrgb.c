@@ -304,8 +304,8 @@ void openrgb_get_led_info(uint8_t *data) {
         if (col >= MATRIX_COLS || row >= MATRIX_ROWS) {
             raw_hid_buffer[data_idx + 7] = KC_NO;
         } else {
-            // raw_hid_buffer[data_idx + 7] = pgm_read_byte(&keymaps[0][row][col]);
-            raw_hid_buffer[data_idx + 7] = keycode_at_keymap_location(OPENRGB_MAIN_LAYER, row, col) & 0xFF;
+            keypos_t pos = { .row = row, .col = col };
+            raw_hid_buffer[data_idx + 7] = keymap_key_to_keycode(OPENRGB_MAIN_LAYER, pos) & 0xFF;
         }
     }
 }
@@ -341,11 +341,13 @@ void openrgb_set_mode(uint8_t *data) {
     }
 
     if (save == 1) {
+        rgb_matrix_enable();
         rgb_matrix_mode(mode);
         rgb_matrix_set_speed(speed);
         rgb_matrix_sethsv(h, s, v);
     }
     else {
+        rgb_matrix_enable_noeeprom();
         rgb_matrix_mode_noeeprom(mode);
         rgb_matrix_set_speed_noeeprom(speed);
         rgb_matrix_sethsv_noeeprom(h, s, v);
