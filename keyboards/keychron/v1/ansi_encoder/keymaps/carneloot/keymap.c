@@ -43,7 +43,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         RGB_TOG,  RGB_MOD,  RGB_VAI,  RGB_HUI,  RGB_SAI,  RGB_SPI,  _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            KC_PGUP,
         _______,  RGB_RMOD, RGB_VAD,  RGB_HUD,  RGB_SAD,  RGB_SPD,  _______,  QK_BOOT,  _______,  _______,  _______,  _______,              _______,            KC_PGDN,
         _______,            _______,  _______,  _______,  _______,  _______,  NK_TOGG,  _______,  _______,  _______,  _______,              _______,  _______,
-        _______,  _______,  _______,                                _______,                                _______,  _______,    _______,  _______,  _______,  _______),
+        _______,  GU_TOGG,  _______,                                _______,                                _______,  _______,    _______,  _______,  _______,  _______),
 
     [FN_2] = LAYOUT_ansi_82(
         KC_ESC,   KC_BRID,  KC_BRIU,  KC_NO,    KC_NO,    RGB_VAD,  RGB_VAI,  KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,  KC_VOLD,  KC_VOLU,  KC_DEL,             KC_MUTE,
@@ -75,9 +75,9 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][2] = {
 #if defined(RGB_MATRIX_ENABLE)
 
 #ifdef RGB_MATRIX_MAXIMUM_BRIGHTNESS
-    #define CAPS_LOCK_MAX_BRIGHTNESS RGB_MATRIX_MAXIMUM_BRIGHTNESS
+    #define MAX_BRIGHTNESS RGB_MATRIX_MAXIMUM_BRIGHTNESS
 #else
-    #define CAPS_LOCK_MAX_BRIGHTNESS 0xFF
+    #define MAX_BRIGHTNESS 0xFF
 #endif
 
 uint8_t caps_lock_leds[] = {
@@ -110,11 +110,18 @@ size_t caps_lock_leds_size = sizeof caps_lock_leds / sizeof caps_lock_leds[0];
 
 bool rgb_matrix_indicators_user(void) {
     if (host_keyboard_led_state().caps_lock) {
-        uint8_t b = CAPS_LOCK_MAX_BRIGHTNESS;
+        uint8_t b = MAX_BRIGHTNESS;
         for (int i = 0; i < caps_lock_leds_size; i++) {
             rgb_matrix_set_color(caps_lock_leds[i], b, b, b);
         }
     }
+
+    // Win key disabled = set light to on
+    if (keymap_config.no_gui) {
+        // #eb005a
+        rgb_matrix_set_color(73, 0xEB, 0x00, 0x5A);
+    }
+
     return true;
 }
 
