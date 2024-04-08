@@ -125,10 +125,4 @@ bool rgb_matrix_indicators_user(void) {
     return true;
 }
 
-#ifdef OPENRGB_ENABLE
-void keyboard_post_init_user(void) {
-    rgb_matrix_mode(RGB_MATRIX_OPENRGB_DIRECT);
-}
-#endif
-
 #endif
