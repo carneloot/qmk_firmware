@@ -108,6 +108,21 @@ uint8_t caps_lock_leds[] = {
 
 size_t caps_lock_leds_size = sizeof caps_lock_leds / sizeof caps_lock_leds[0];
 
+#ifdef KEY_CANCELLATION_ENABLE
+
+#define SOCD_BLINK_PERIOD 200
+#define SOCD_BLINK_KEY 66 // M
+#define SOCD_BLINK_R 0x00
+#define SOCD_BLINK_G 0x74
+#define SOCD_BLINK_B 0xff
+
+uint8_t socd_blinks = 0;
+bool socd_light_state = false;
+bool socd_blinker_running = false;
+static uint16_t socd_timer;
+
+#endif
+
 bool rgb_matrix_indicators_user(void) {
     if (host_keyboard_led_state().caps_lock) {
         uint8_t b = MAX_BRIGHTNESS;
@@ -122,7 +137,57 @@ bool rgb_matrix_indicators_user(void) {
         rgb_matrix_set_color(73, 0xEB, 0x00, 0x5A);
     }
 
+#ifdef KEY_CANCELLATION_ENABLE
+
+    if (socd_blinker_running) {
+        uint8_t max_blinks = key_cancellation_is_enabled() ? 2 : 1;
+
+        if (timer_elapsed(socd_timer) > SOCD_BLINK_PERIOD) {
+            socd_light_state = !socd_light_state;
+            socd_timer = timer_read();
+            if (socd_light_state) {
+                socd_blinks++;
+            } else if (socd_blinks >= max_blinks) {
+                socd_blinker_running = false;
+            }
+        }
+
+        if (socd_light_state) {
+            rgb_matrix_set_color(SOCD_BLINK_KEY, SOCD_BLINK_R, SOCD_BLINK_G, SOCD_BLINK_B);
+        }
+    }
+#endif
+
     return true;
 }
 
 #endif
+
+void keyboard_post_init_user(void) {
+    // enable nkey rollover
+}
+
+#ifdef KEY_CANCELLATION_ENABLE
+
+void start_socd_blinker(void) {
+    socd_blinks = 0;
+    socd_timer = timer_read() - SOCD_BLINK_PERIOD;
+    socd_light_state = false;
+    socd_blinker_running = true;
+}
+
+const key_cancellation_t PROGMEM key_cancellation_list[] = {
+    [0] = {KC_D, KC_A, KX_KEEP_PRESSED},
+    [1] = {KC_A, KC_D, KX_KEEP_PRESSED}
+};
+#endif
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+#ifdef KEY_CANCELLATION_ENABLE
+    if (!record->event.pressed && keycode == QK_KEY_CANCELLATION_TOGGLE) {
+        start_socd_blinker();
+    }
+#endif
+
+    return true;
+}

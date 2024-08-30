@@ -83,6 +83,9 @@
 #ifdef LAYER_LOCK_ENABLE
 #    include "process_layer_lock.h"
 #endif
+#ifdef KEY_CANCELLATION_ENABLE
+#    include "process_key_cancellation.h"
+#endif
 
 #ifdef AUDIO_ENABLE
 #    ifndef GOODBYE_SONG
@@ -416,6 +419,9 @@ bool process_record_quantum(keyrecord_t *record) {
 #endif
 #ifdef BLUETOOTH_ENABLE
             process_connection(keycode, record) &&
+#endif
+#ifdef KEY_CANCELLATION_ENABLE
+            process_key_cancellation(keycode, record) &&
 #endif
             true)) {
         return false;
