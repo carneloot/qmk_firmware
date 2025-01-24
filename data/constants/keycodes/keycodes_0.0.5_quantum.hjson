@@ -1,20 +1,20 @@
 {
     "keycodes": {
-        "0x7C7B": {
+        "0x7C7C": {
             "group": "quantum",
             "key": "QK_KEY_CANCELLATION_ON",
             "aliases": [
                 "KX_CAON"
             ]
         },
-        "0x7C7C": {
+        "0x7C7D": {
             "group": "quantum",
             "key": "QK_KEY_CANCELLATION_OFF",
             "aliases": [
                 "KX_CAOF"
             ]
         },
-        "0x7C7D": {
+        "0x7C7E": {
             "group": "quantum",
             "key": "QK_KEY_CANCELLATION_TOGGLE",
             "aliases": [
