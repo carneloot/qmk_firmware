@@ -28,6 +28,37 @@ enum layers{
 #define KC_TASK LGUI(KC_TAB)
 #define KC_FLXP LGUI(KC_E)
 
+// Accented letters
+
+#define UC_ATIL UC(0x00E3)
+#define UC_OTIL UC(0x00F5)
+#define UC_ACUT UC(0x00E1)
+#define UC_ECUT UC(0x00E9)
+#define UC_ICUT UC(0x00ED)
+#define UC_OCUT UC(0x00F3)
+#define UC_CDIL UC(0x00E7)
+#define UC_AGRA UC(0x00E0)
+
+const uint16_t PROGMEM cdil_combo[] = {KC_QUOT, KC_C, COMBO_END};
+const uint16_t PROGMEM atil_combo[] = {KC_SCLN, KC_A, COMBO_END};
+const uint16_t PROGMEM otil_combo[] = {KC_GRV, KC_O, COMBO_END};
+const uint16_t PROGMEM acut_combo[] = {KC_QUOT, KC_A, COMBO_END};
+const uint16_t PROGMEM ecut_combo[] = {KC_QUOT, KC_E, COMBO_END};
+const uint16_t PROGMEM icut_combo[] = {KC_QUOT, KC_I, COMBO_END};
+const uint16_t PROGMEM ocut_combo[] = {KC_QUOT, KC_O, COMBO_END};
+const uint16_t PROGMEM agra_combo[] = {KC_LBRC, KC_A, COMBO_END};
+
+combo_t key_combos[] = {
+    COMBO(cdil_combo, UC_CDIL),
+    COMBO(atil_combo, UC_ATIL),
+    COMBO(otil_combo, UC_OTIL),
+    COMBO(acut_combo, UC_ACUT),
+    COMBO(ecut_combo, UC_ECUT),
+    COMBO(icut_combo, UC_ICUT),
+    COMBO(ocut_combo, UC_OCUT),
+    COMBO(agra_combo, UC_AGRA),
+};
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [BASE] = LAYOUT_ansi_82(
         KC_ESC,  KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,    KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,   KC_F12,   KC_INS,             KC_MUTE,
@@ -39,7 +70,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [FN_1] = LAYOUT_ansi_82(
         _______,  KC_BRID,  KC_BRIU,  KC_CALC,  KC_FLXP,  RGB_VAD,  RGB_VAI,  KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,  KC_VOLD,    KC_VOLU,  KC_PSCR,            RGB_TOG,
-        _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            _______,
+        _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  UC_LINX,  UC_WINC,  _______,    _______,  _______,            _______,
         RGB_TOG,  RGB_MOD,  RGB_VAI,  RGB_HUI,  RGB_SAI,  RGB_SPI,  _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            KC_PGUP,
         KC_CAPS,  RGB_RMOD, RGB_VAD,  RGB_HUD,  RGB_SAD,  RGB_SPD,  _______,  QK_BOOT,  _______,  _______,  _______,  _______,              _______,            KC_PGDN,
         _______,            _______,  _______,  _______,  _______,  _______,  NK_TOGG,  KX_CATG,  _______,  _______,  _______,              _______,  _______,
