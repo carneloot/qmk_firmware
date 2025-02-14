@@ -1,20 +1,5 @@
-/* Copyright 2021 @ Keychron (https://www.keychron.com)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 #include QMK_KEYBOARD_H
+#include "blinker.h"
 
 // clang-format off
 
@@ -147,10 +132,18 @@ size_t caps_lock_leds_size = sizeof caps_lock_leds / sizeof caps_lock_leds[0];
 #define SOCD_BLINK_G 0x74
 #define SOCD_BLINK_B 0xff
 
-uint8_t socd_blinks = 0;
-bool socd_light_state = false;
-bool socd_blinker_running = false;
-static uint16_t socd_timer;
+blinker_t socd_blinker = CREATE_BLINKER(
+    SOCD_BLINK_PERIOD,
+    SOCD_BLINK_KEY,
+    SOCD_BLINK_R,
+    SOCD_BLINK_G,
+    SOCD_BLINK_B
+);
+
+const key_cancellation_t PROGMEM key_cancellation_list[] = {
+    [0] = {KC_D, KC_A, KX_KEEP_PRESSED},
+    [1] = {KC_A, KC_D, KX_KEEP_PRESSED}
+};
 
 #endif
 
@@ -162,10 +155,13 @@ static uint16_t socd_timer;
 #define COMBO_BLINK_G 0xA7
 #define COMBO_BLINK_B 0x04
 
-uint8_t combo_blinks = 0;
-bool combo_light_state = false;
-bool combo_blinker_running = false;
-static uint16_t combo_timer;
+blinker_t combo_blinker = CREATE_BLINKER(
+    COMBO_BLINK_PERIOD,
+    COMBO_BLINK_KEY,
+    COMBO_BLINK_R,
+    COMBO_BLINK_G,
+    COMBO_BLINK_B
+);
 
 #endif
 
@@ -184,45 +180,12 @@ bool rgb_matrix_indicators_user(void) {
     }
 
 #ifdef KEY_CANCELLATION_ENABLE
-
-    if (socd_blinker_running) {
-        uint8_t max_blinks = key_cancellation_is_enabled() ? 2 : 1;
-
-        if (timer_elapsed(socd_timer) > SOCD_BLINK_PERIOD) {
-            socd_light_state = !socd_light_state;
-            socd_timer = timer_read();
-            if (socd_light_state) {
-                socd_blinks++;
-            } else if (socd_blinks >= max_blinks) {
-                socd_blinker_running = false;
-            }
-        }
-
-        if (socd_light_state) {
-            rgb_matrix_set_color(SOCD_BLINK_KEY, SOCD_BLINK_R, SOCD_BLINK_G, SOCD_BLINK_B);
-        }
-    }
+    blink_led(&socd_blinker);
 #endif
 
 
 #if defined(COMBO_ENABLE)
-    if (combo_blinker_running) {
-        uint8_t max_blinks = is_combo_enabled() ? 2 : 1;
-
-        if (timer_elapsed(combo_timer) > COMBO_BLINK_PERIOD) {
-            combo_light_state = !combo_light_state;
-            combo_timer = timer_read();
-            if (combo_light_state) {
-                combo_blinks++;
-            } else if (combo_blinks >= max_blinks) {
-                combo_blinker_running = false;
-            }
-        }
-
-        if (combo_light_state) {
-            rgb_matrix_set_color(COMBO_BLINK_KEY, COMBO_BLINK_R, COMBO_BLINK_G, COMBO_BLINK_B);
-        }
-    }
+    blink_led(&combo_blinker);
 #endif
 
     return true;
@@ -230,46 +193,16 @@ bool rgb_matrix_indicators_user(void) {
 
 #endif
 
-void keyboard_post_init_user(void) {
-    // enable nkey rollover
-}
-
-#ifdef KEY_CANCELLATION_ENABLE
-
-void start_socd_blinker(void) {
-    socd_blinks = 0;
-    socd_timer = timer_read() - SOCD_BLINK_PERIOD;
-    socd_light_state = false;
-    socd_blinker_running = true;
-}
-
-const key_cancellation_t PROGMEM key_cancellation_list[] = {
-    [0] = {KC_D, KC_A, KX_KEEP_PRESSED},
-    [1] = {KC_A, KC_D, KX_KEEP_PRESSED}
-};
-#endif
-
-#if defined(COMBO_ENABLE)
-
-void start_combo_blinker(void) {
-    combo_blinks = 0;
-    combo_timer = timer_read() - COMBO_BLINK_PERIOD;
-    combo_light_state = false;
-    combo_blinker_running = true;
-}
-
-#endif
-
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 #ifdef KEY_CANCELLATION_ENABLE
     if (!record->event.pressed && keycode == QK_KEY_CANCELLATION_TOGGLE) {
-        start_socd_blinker();
+        start_blinker(&socd_blinker, key_cancellation_is_enabled() ? 2 : 1);
     }
 #endif
 
 #if defined(COMBO_ENABLE)
     if (!record->event.pressed && keycode == QK_COMBO_TOGGLE) {
-        start_combo_blinker();
+        start_blinker(&combo_blinker, is_combo_enabled() ? 2 : 1);
     }
 #endif
 
