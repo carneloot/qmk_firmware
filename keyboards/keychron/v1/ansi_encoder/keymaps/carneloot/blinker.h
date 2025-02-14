@@ -24,7 +24,7 @@ typedef struct {
     .r = R,                                  \
     .g = G,                                  \
     .b = B,                                  \
-    .max_blinks = 0                          \
+    .max_blinks = 1                          \
   }
 
 
@@ -45,10 +45,9 @@ void blink_led(blinker_t *blinker) {
     }
 }
 
-void start_blinker(blinker_t *blinker, uint8_t max_blinks) {
+void start_blinker(blinker_t *blinker) {
     blinker->blinks = 0;
     blinker->timer = timer_read() - blinker->period;
     blinker->light_state = false;
     blinker->blinker_running = true;
-    blinker->max_blinks = max_blinks;
 }

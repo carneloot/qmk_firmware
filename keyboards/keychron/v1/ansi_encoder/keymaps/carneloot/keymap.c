@@ -55,7 +55,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [FN_1] = LAYOUT_ansi_82(
         _______,  KC_BRID,  KC_BRIU,  KC_CALC,  KC_FLXP,  RGB_VAD,  RGB_VAI,  KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,  KC_VOLD,    KC_VOLU,  KC_PSCR,            RGB_TOG,
-        _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  UC_LINX,  UC_WINC,  _______,    _______,  _______,            _______,
+        _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  UC_NEXT,  _______,  _______,    _______,  _______,            _______,
         RGB_TOG,  RGB_MOD,  RGB_VAI,  RGB_HUI,  RGB_SAI,  RGB_SPI,  _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            KC_PGUP,
         KC_CAPS,  RGB_RMOD, RGB_VAD,  RGB_HUD,  RGB_SAD,  RGB_SPD,  _______,  QK_BOOT,  _______,  _______,  _______,  _______,              _______,            KC_PGDN,
         _______,            _______,  _______,  CM_TOGG,  _______,  _______,  NK_TOGG,  KX_CATG,  _______,  _______,  _______,              _______,  _______,
@@ -97,29 +97,8 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][2] = {
 #endif
 
 uint8_t caps_lock_leds[] = {
-    0,
-    15,
-    30,
-    45,
-    59,
-    72,
-    73,
-    74,
-    76,
-    77,
-    78,
-    70,
-    57,
-    43,
-    28,
-    13,
-    29,
-    44,
-    58,
-    5,
-    6,
-    7,
-    8
+    0, 15, 30, 45, 59, 72, 73, 74, 76, 77, 78,
+    70, 57, 43, 28, 13, 29, 44, 58, 5, 6, 7, 8
 };
 
 size_t caps_lock_leds_size = sizeof caps_lock_leds / sizeof caps_lock_leds[0];
@@ -196,13 +175,20 @@ bool rgb_matrix_indicators_user(void) {
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 #ifdef KEY_CANCELLATION_ENABLE
     if (!record->event.pressed && keycode == QK_KEY_CANCELLATION_TOGGLE) {
-        start_blinker(&socd_blinker, key_cancellation_is_enabled() ? 2 : 1);
+        socd_blinker.max_blinks = key_cancellation_is_enabled() ? 2 : 1;
+        start_blinker(&socd_blinker);
     }
 #endif
 
 #if defined(COMBO_ENABLE)
-    if (!record->event.pressed && keycode == QK_COMBO_TOGGLE) {
-        start_blinker(&combo_blinker, is_combo_enabled() ? 2 : 1);
+    if (!record->event.pressed) {
+        if (keycode == QK_COMBO_TOGGLE) {
+            combo_blinker.max_blinks = is_combo_enabled() ? 2 : 1;
+            start_blinker(&combo_blinker);
+        } else if (keycode == UC_NEXT) {
+            combo_blinker.max_blinks = get_unicode_input_mode() == UNICODE_MODE_LINUX ? 1 : 2;
+            start_blinker(&combo_blinker);
+        }
     }
 #endif
 
