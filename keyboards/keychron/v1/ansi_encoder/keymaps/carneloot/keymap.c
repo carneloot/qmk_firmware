@@ -73,7 +73,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  UC_LINX,  UC_WINC,  _______,    _______,  _______,            _______,
         RGB_TOG,  RGB_MOD,  RGB_VAI,  RGB_HUI,  RGB_SAI,  RGB_SPI,  _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            KC_PGUP,
         KC_CAPS,  RGB_RMOD, RGB_VAD,  RGB_HUD,  RGB_SAD,  RGB_SPD,  _______,  QK_BOOT,  _______,  _______,  _______,  _______,              _______,            KC_PGDN,
-        _______,            _______,  _______,  _______,  _______,  _______,  NK_TOGG,  KX_CATG,  _______,  _______,  _______,              _______,  _______,
+        _______,            _______,  _______,  CM_TOGG,  _______,  _______,  NK_TOGG,  KX_CATG,  _______,  _______,  _______,              _______,  _______,
         _______,  GU_TOGG,  _______,                                _______,                                _______,  _______,    _______,  _______,  _______,  _______),
 
     [GAMES] = LAYOUT_ansi_82(
@@ -154,6 +154,21 @@ static uint16_t socd_timer;
 
 #endif
 
+#if defined(COMBO_ENABLE)
+
+#define COMBO_BLINK_PERIOD 200
+#define COMBO_BLINK_KEY 62 // C
+#define COMBO_BLINK_R 0x06
+#define COMBO_BLINK_G 0xA7
+#define COMBO_BLINK_B 0x04
+
+uint8_t combo_blinks = 0;
+bool combo_light_state = false;
+bool combo_blinker_running = false;
+static uint16_t combo_timer;
+
+#endif
+
 bool rgb_matrix_indicators_user(void) {
     if (host_keyboard_led_state().caps_lock) {
         uint8_t b = MAX_BRIGHTNESS;
@@ -189,6 +204,27 @@ bool rgb_matrix_indicators_user(void) {
     }
 #endif
 
+
+#if defined(COMBO_ENABLE)
+    if (combo_blinker_running) {
+        uint8_t max_blinks = is_combo_enabled() ? 2 : 1;
+
+        if (timer_elapsed(combo_timer) > COMBO_BLINK_PERIOD) {
+            combo_light_state = !combo_light_state;
+            combo_timer = timer_read();
+            if (combo_light_state) {
+                combo_blinks++;
+            } else if (combo_blinks >= max_blinks) {
+                combo_blinker_running = false;
+            }
+        }
+
+        if (combo_light_state) {
+            rgb_matrix_set_color(COMBO_BLINK_KEY, COMBO_BLINK_R, COMBO_BLINK_G, COMBO_BLINK_B);
+        }
+    }
+#endif
+
     return true;
 }
 
@@ -213,10 +249,27 @@ const key_cancellation_t PROGMEM key_cancellation_list[] = {
 };
 #endif
 
+#if defined(COMBO_ENABLE)
+
+void start_combo_blinker(void) {
+    combo_blinks = 0;
+    combo_timer = timer_read() - COMBO_BLINK_PERIOD;
+    combo_light_state = false;
+    combo_blinker_running = true;
+}
+
+#endif
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 #ifdef KEY_CANCELLATION_ENABLE
     if (!record->event.pressed && keycode == QK_KEY_CANCELLATION_TOGGLE) {
         start_socd_blinker();
+    }
+#endif
+
+#if defined(COMBO_ENABLE)
+    if (!record->event.pressed && keycode == QK_COMBO_TOGGLE) {
+        start_combo_blinker();
     }
 #endif
 
