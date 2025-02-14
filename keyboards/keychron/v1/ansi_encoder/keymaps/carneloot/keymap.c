@@ -21,6 +21,7 @@ enum layers{
 #define UC_ECUT UC(0x00E9)
 #define UC_ICUT UC(0x00ED)
 #define UC_OCUT UC(0x00F3)
+#define UC_UCUT UC(0x00FA)
 #define UC_CDIL UC(0x00E7)
 #define UC_AGRA UC(0x00E0)
 
@@ -31,6 +32,7 @@ const uint16_t PROGMEM acut_combo[] = {KC_QUOT, KC_A, COMBO_END};
 const uint16_t PROGMEM ecut_combo[] = {KC_QUOT, KC_E, COMBO_END};
 const uint16_t PROGMEM icut_combo[] = {KC_QUOT, KC_I, COMBO_END};
 const uint16_t PROGMEM ocut_combo[] = {KC_QUOT, KC_O, COMBO_END};
+const uint16_t PROGMEM ucut_combo[] = {KC_QUOT, KC_U, COMBO_END};
 const uint16_t PROGMEM agra_combo[] = {KC_LBRC, KC_A, COMBO_END};
 
 combo_t key_combos[] = {
@@ -41,6 +43,7 @@ combo_t key_combos[] = {
     COMBO(ecut_combo, UC_ECUT),
     COMBO(icut_combo, UC_ICUT),
     COMBO(ocut_combo, UC_OCUT),
+    COMBO(ucut_combo, UC_UCUT),
     COMBO(agra_combo, UC_AGRA),
 };
 
