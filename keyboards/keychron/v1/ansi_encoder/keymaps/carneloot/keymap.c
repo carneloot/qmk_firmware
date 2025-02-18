@@ -15,6 +15,8 @@ enum layers{
 
 // Accented letters
 
+#if defined(UNICODE_ENABLE)
+
 #define UC_ATIL UC(0x00E3)
 #define UC_OTIL UC(0x00F5)
 #define UC_ACUT UC(0x00E1)
@@ -35,6 +37,7 @@ const uint16_t PROGMEM ocut_combo[] = {KC_QUOT, KC_O, COMBO_END};
 const uint16_t PROGMEM ucut_combo[] = {KC_QUOT, KC_U, COMBO_END};
 const uint16_t PROGMEM agra_combo[] = {KC_LBRC, KC_A, COMBO_END};
 
+#if defined(COMBO_ENABLE)
 combo_t key_combos[] = {
     COMBO(cdil_combo, UC_CDIL),
     COMBO(atil_combo, UC_ATIL),
@@ -46,6 +49,9 @@ combo_t key_combos[] = {
     COMBO(ucut_combo, UC_UCUT),
     COMBO(agra_combo, UC_AGRA),
 };
+
+#endif
+#endif
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [BASE] = LAYOUT_ansi_82(
